@@ -12,7 +12,9 @@ struct ContentView: View {
                 
                 List {
                     ForEach(viewModel.notes) { note in
-                        VStack(alignment: .leading) {
+                        
+                        // 🔴 DEĞİŞTİ → Not görünümü kart gibi yapıldı
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(note.title)
                                 .font(.headline)
                             
@@ -23,16 +25,28 @@ struct ContentView: View {
                             Text(note.date, style: .date)
                                 .font(.caption)
                         }
+                        .padding() // 🔴 DEĞİŞTİ
+                        .background( // 🔴 DEĞİŞTİ
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(red: 1.0, green: 0.98, blue: 0.9))
+                                .shadow(radius: 3)
+                        )
+                        .padding(.vertical, 4) // 🔴 DEĞİŞTİ
                     }
                     .onDelete(perform: viewModel.deleteNote)
                 }
                 
-                VStack {
+                // 🔴 DEĞİŞTİ → Not ekleme alanı daha düzenli
+                VStack(spacing: 12) {
                     TextField("Title", text: $newTitle)
                         .textFieldStyle(.roundedBorder)
                     
-                    TextField("Content", text: $newContent)
-                        .textFieldStyle(.roundedBorder)
+                    // 🔴 DEĞİŞTİ → TextField yerine TextEditor (çok satır)
+                    TextEditor(text: $newContent)
+                        .frame(height: 100)
+                        .padding(8)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
                     
                     Button("Ekle") {
                         if !newTitle.isEmpty || !newContent.isEmpty {
@@ -47,12 +61,10 @@ struct ContentView: View {
                             newContent = ""
                         }
                     }
-
                 }
                 .padding()
             }
             .navigationTitle("Notes")
-            
         }
     }
 }
@@ -60,3 +72,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
