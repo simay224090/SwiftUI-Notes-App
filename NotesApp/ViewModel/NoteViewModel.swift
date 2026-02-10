@@ -30,10 +30,12 @@ class NoteViewModel: ObservableObject {
 
     
     func updateNote(_ note: Note) {
-        if let index = notes.firstIndex(of: note) {
+        if let index = notes.firstIndex(where: { $0.id == note.id }) {
             notes[index] = note
             saveNotes()
         }
+        
+
     }
     private func saveNotes() {
         let encoder = JSONEncoder()
@@ -41,6 +43,8 @@ class NoteViewModel: ObservableObject {
             UserDefaults.standard.set(encoded, forKey: saveKey)
         }
     }
+    
+    
     
     private func loadNotes() {
         if let savedNotes = UserDefaults.standard.data(forKey: saveKey) {
@@ -50,4 +54,6 @@ class NoteViewModel: ObservableObject {
             }
         }
     }
+    
+    
 }

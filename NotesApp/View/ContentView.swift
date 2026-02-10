@@ -6,34 +6,85 @@ struct ContentView: View {
     @State private var newTitle: String = ""
     @State private var newContent: String = ""
     
+    @State private var editingNoteID: UUID? = nil
+    @State private var editedTitle: String = ""
+    @State private var editedContent: String = ""
+
+    
     var body: some View {
         NavigationStack {
             VStack {
                 
                 List {
                     ForEach(viewModel.notes) { note in
-                        
-                        // 🔴 DEĞİŞTİ → Not görünümü kart gibi yapıldı
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(note.title)
-                                .font(.headline)
-                            
-                            Text(note.content)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            
-                            Text(note.date, style: .date)
-                                .font(.caption)
+
+                            if editingNoteID == note.id {
+                                // ✏️ EDIT MODU
+                                TextField("Title", text: $editedTitle)
+                                    .textFieldStyle(.roundedBorder)
+
+                                TextEditor(text: $editedContent)
+                                    .frame(height: 80)
+                                    .padding(4)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+
+                                Button("Kaydet") {
+                                    let updatedNote = Note(
+                                        id: note.id,
+                                        title: editedTitle,
+                                        content: editedContent,
+                                        date: note.date
+                                    )
+                                    viewModel.updateNote(updatedNote)
+                                    editingNoteID = nil
+                                }
+
+                            } else {
+                                // 👁 NORMAL MOD
+                                Text(note.title)
+                                    .font(.headline)
+
+                                Text(note.content)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+
+                                Text(note.date, style: .date)
+                                    .font(.caption)
+                            }
                         }
-                        .padding() // 🔴 DEĞİŞTİ
-                        .background( // 🔴 DEĞİŞTİ
+                        .padding()
+                        .background(
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(Color(red: 1.0, green: 0.98, blue: 0.9))
                                 .shadow(radius: 3)
                         )
-                        .padding(.vertical, 4) // 🔴 DEĞİŞTİ
+                        .padding(.vertical, 4)
+
+                        // 👉 SAĞA KAYDIR = EDIT
+                        .swipeActions(edge: .leading) {
+                            Button("Edit") {
+                                editingNoteID = note.id
+                                editedTitle = note.title
+                                editedContent = note.content
+                            }
+                            .tint(.blue)
+                        }
+
+                        // 👉 SOLA KAYDIR = DELETE
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                if let index = viewModel.notes.firstIndex(of: note) {
+                                    viewModel.deleteNote(at: IndexSet(integer: index))
+                                }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
-                    .onDelete(perform: viewModel.deleteNote)
+
+                     
                 }
                 
                 // 🔴 DEĞİŞTİ → Not ekleme alanı daha düzenli
