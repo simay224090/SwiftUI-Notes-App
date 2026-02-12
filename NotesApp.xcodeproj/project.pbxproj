@@ -21,6 +21,11 @@
 			path = NotesApp;
 			sourceTree = "<group>";
 		};
+		4CC7127B2F3E687A00086810 /* screenshots */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = screenshots;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +45,7 @@
 				4C4F49052F3A944B00737722 /* NotesApp */,
 				4C4F49042F3A944B00737722 /* Products */,
 				4CC712792F3E584100086810 /* Colorhex.swift */,
+				4CC7127B2F3E687A00086810 /* screenshots */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,6 +74,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4C4F49052F3A944B00737722 /* NotesApp */,
+				4CC7127B2F3E687A00086810 /* screenshots */,
 			);
 			name = NotesApp;
 			packageProductDependencies = (
