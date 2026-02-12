@@ -18,25 +18,49 @@ class NoteViewModel: ObservableObject {
         loadNotes()
     }
     
-    func addNote(_ note: Note) {
+    func addNote(title: String, content: String) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // ❌ ikisi de boşsa ekleme
+        if trimmedTitle.isEmpty && trimmedContent.isEmpty {
+            return
+        }
+
+        let note = Note(
+            id: UUID(),
+            title: trimmedTitle,
+            content: trimmedContent,
+            date: Date()
+        )
+
         notes.append(note)
         saveNotes()
     }
+
     
-    func deleteNote(at offsets: IndexSet) {
-        notes.remove(atOffsets: offsets)
+    func deleteNote(_ note: Note) {
+        notes.removeAll { $0.id == note.id }
         saveNotes()
     }
 
     
-    func updateNote(_ note: Note) {
-        if let index = notes.firstIndex(where: { $0.id == note.id }) {
-            notes[index] = note
-            saveNotes()
+    func updateNote(id: UUID, title: String, content: String) {
+        // ❌ İkisi de boşsa güncelleme yapma
+        if title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+           content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return
         }
-        
 
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+
+        notes[index].title = title
+        notes[index].content = content
+        saveNotes()
     }
+
+
+    
     private func saveNotes() {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(notes) {

@@ -31,15 +31,14 @@ struct ContentView: View {
                                     .cornerRadius(8)
 
                                 Button("Kaydet") {
-                                    let updatedNote = Note(
+                                    viewModel.updateNote(
                                         id: note.id,
                                         title: editedTitle,
-                                        content: editedContent,
-                                        date: note.date
+                                        content: editedContent
                                     )
-                                    viewModel.updateNote(updatedNote)
                                     editingNoteID = nil
                                 }
+
 
                             } else {
                                 // 👁 NORMAL MOD
@@ -75,13 +74,12 @@ struct ContentView: View {
                         // 👉 SOLA KAYDIR = DELETE
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                if let index = viewModel.notes.firstIndex(of: note) {
-                                    viewModel.deleteNote(at: IndexSet(integer: index))
-                                }
+                                viewModel.deleteNote(note)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
+
                     }
 
                      
@@ -100,18 +98,11 @@ struct ContentView: View {
                         .cornerRadius(12)
                     
                     Button("Ekle") {
-                        if !newTitle.isEmpty || !newContent.isEmpty {
-                            let note = Note(
-                                id: UUID(),
-                                title: newTitle,
-                                content: newContent,
-                                date: Date()
-                            )
-                            viewModel.addNote(note)
-                            newTitle = ""
-                            newContent = ""
-                        }
+                        viewModel.addNote(title: newTitle, content: newContent)
+                        newTitle = ""
+                        newContent = ""
                     }
+
                 }
                 .padding()
             }
