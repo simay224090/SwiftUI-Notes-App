@@ -77,8 +77,6 @@ struct ContentView: View {
                                 .fill(Color(hex: note.colorHex))
                                 .shadow(radius: 3)
                         )
-
-                        
                         .padding(.vertical, 4)
 
                         // 👉 SAĞA KAYDIR = EDIT
@@ -109,6 +107,7 @@ struct ContentView: View {
                 VStack(spacing: 12) {
                     TextField("Title", text: $newTitle)
                         .textFieldStyle(.roundedBorder)
+                        .font(.headline)
                     
                     // 🔴 DEĞİŞTİ → TextField yerine TextEditor (çok satır)
                     TextEditor(text: $newContent)
@@ -116,17 +115,26 @@ struct ContentView: View {
                         .padding(8)
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
-                    
-                    Button("Ekle") {
+                       
+                
+                    Button {
                         viewModel.addNote(title: newTitle, content: newContent)
                         newTitle = ""
                         newContent = ""
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "plus.circle")
+                            Text("Ekle")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.indigo)
                     }
 
                 }
                 .padding()
             }
             .navigationTitle("Notes")
+            
         }
     }
 }
