@@ -12,4 +12,5 @@ struct Note: Identifiable,Codable,Equatable {
     var title: String
     var content: String
     var date: Date
+    var colorHex: String
 }

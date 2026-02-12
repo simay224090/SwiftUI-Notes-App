@@ -8,6 +8,9 @@ import Foundation
 import Combine
 import SwiftUI
 
+
+
+
 class NoteViewModel: ObservableObject {
     
     @Published var notes: [Note] = []
@@ -17,6 +20,8 @@ class NoteViewModel: ObservableObject {
     init() {
         loadNotes()
     }
+    
+    
     
     func addNote(title: String, content: String) {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -31,7 +36,9 @@ class NoteViewModel: ObservableObject {
             id: UUID(),
             title: trimmedTitle,
             content: trimmedContent,
-            date: Date()
+            date: Date(),
+            colorHex: Color.purple.hashValue.description
+            
         )
 
         notes.append(note)
@@ -45,19 +52,26 @@ class NoteViewModel: ObservableObject {
     }
 
     
-    func updateNote(id: UUID, title: String, content: String) {
-        // ❌ İkisi de boşsa güncelleme yapma
-        if title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-           content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+    func updateNote(id: UUID, title: String, content: String, colorHex: String? = nil) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmedTitle.isEmpty && trimmedContent.isEmpty {
             return
         }
 
-        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        if let index = notes.firstIndex(where: { $0.id == id }) {
+            notes[index].title = trimmedTitle
+            notes[index].content = trimmedContent
 
-        notes[index].title = title
-        notes[index].content = content
-        saveNotes()
+            if let colorHex = colorHex {
+                notes[index].colorHex = colorHex
+            }
+
+            saveNotes()
+        }
     }
+
 
 
     
@@ -80,4 +94,30 @@ class NoteViewModel: ObservableObject {
     }
     
     
+    
+    
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r = Double((int >> 16) & 0xFF) / 255
+        let g = Double((int >> 8) & 0xFF) / 255
+        let b = Double(int & 0xFF) / 255
+        self.init(red: r, green: g, blue: b)
+    }
+
+    func toHex() -> String {
+        let uiColor = UIColor(self)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return String(
+            format: "%02X%02X%02X",
+            Int(r * 255),
+            Int(g * 255),
+            Int(b * 255)
+        )
+    }
 }

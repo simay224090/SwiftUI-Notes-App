@@ -17,6 +17,24 @@ struct ContentView: View {
                 
                 List {
                     ForEach(viewModel.notes) { note in
+                        HStack {
+                            Spacer()
+                            ColorPicker("", selection: Binding(
+                                get: {
+                                    Color(hex: note.colorHex)
+                                },
+                                set: { newColor in
+                                    viewModel.updateNote(
+                                        id: note.id,
+                                        title: note.title,
+                                        content: note.content,
+                                        colorHex: newColor.toHex()
+                                    )
+                                }
+                            ))
+                            .labelsHidden()
+                        }
+
                         VStack(alignment: .leading, spacing: 6) {
 
                             if editingNoteID == note.id {
@@ -56,9 +74,11 @@ struct ContentView: View {
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(red: 1.0, green: 0.98, blue: 0.9))
+                                .fill(Color(hex: note.colorHex))
                                 .shadow(radius: 3)
                         )
+
+                        
                         .padding(.vertical, 4)
 
                         // 👉 SAĞA KAYDIR = EDIT
